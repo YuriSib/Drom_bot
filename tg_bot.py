@@ -1,27 +1,38 @@
 import telebot
-import os
-import time
+import asyncio
+from aiogram import Bot, Dispatcher
 
-from main import scrapping_drom, compare
-
-bot = telebot.TeleBot('6034305301:AAFCiWFQoMQIIee5x2kT62zQJsSXFtyRKSk')
-
-
-# @bot.message_handler(commands=['start'])
-# def test(message_):
-#     chat_id = message_.chat.id
-#     bot.reply_to(message_, f"Your chat ID is: {chat_id}")
-
-def message(car):
-    bot.send_message(674796107, car)
+from app.heandlers import router
+from scrapper import scrapping_drom, compare
+from url_settings import get_url
+import app.keyboards as kb
 
 
-if __name__ == "__main__":
+async def main():
     url = 'https://auto.drom.ru/region54/all/?minprice=500000&minyear=2014&inomarka=1&keywords=срочно'
+    bot = Bot(token='6034305301:AAFCiWFQoMQIIee5x2kT62zQJsSXFtyRKSk')
+    dp = Dispatcher()
+    dp.include_router(router)
+
+    asyncio.create_task(dp.start_polling(bot))
+
+    last_suitable_options = []
     while True:
-        suitable_options, list_id = scrapping_drom(url)
-        new_car = compare(suitable_options, list_id)
+        url = await get_url()
+        suitable_options = await scrapping_drom(url)
+        new_car = await compare(suitable_options, last_suitable_options)
         if new_car:
-            message(new_car)
-        time.sleep(300)
+            for car in new_car:
+                await bot.send_message(674796107, f'По заданным фильтрам есть новое объявление: \n '
+                                                f'Наименование: {car.get("name")}; \n Цена: {car.get("price")}; \n '
+                                                f'Ссылка: {car.get("link")} ')
+        last_suitable_options = suitable_options
+        await asyncio.sleep(300)
+
+
+if __name__ == '__main__':
+    try:
+        asyncio.run(main())
+    except KeyboardInterrupt:
+        print('Exit')
 

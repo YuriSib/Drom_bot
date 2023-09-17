@@ -1,14 +1,9 @@
 import requests
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
-from seleniumbase import SB
-import pickle
-import os
-
-url = 'https://auto.drom.ru/region54/all/?minprice=1500000&minyear=2014&inomarka=1&keywords=срочно'
 
 
-def scrapping_drom(url_):
+async def scrapping_drom(url_):
     ua = UserAgent()
     user_agent = ua.random
 
@@ -19,7 +14,6 @@ def scrapping_drom(url_):
     options = soup.find_all('a', {'data-ftid': 'bulls-list_bull'})
 
     suitable_options = []
-    list_id = []
     for option in options:
         price = option.find('span', {'data-ftid': 'bull_price'}).get_text(strip=True).replace('\xa0', '.')
         lnk = option.get('href')
@@ -38,29 +32,40 @@ def scrapping_drom(url_):
         if 'хорошая' in estimation or 'отличная' in estimation:
             car = dict([('id', id_), ('estimation', estimation), ('name', name), ('link', lnk), ('price', price)])
             suitable_options.append(car)
-            list_id.append(id_)
 
-    return suitable_options, list_id
+    return suitable_options
 
 
-def compare(suitable_options, list_id):
-    if os.path.isfile('list_id.pkl'):
-        with open('list_id.pkl', 'rb') as file:
-            last_list_id = pickle.load(file)
+async def search_options(current_list, last_list):
+    last_id_list = []
+    for last_option in last_list:
+        last_id_list.append(last_option.get('id'))
 
-        new_car_id = [id_ for id_ in list_id if id_ not in last_list_id]
+    current_id_list = []
+    for suitable_option in current_list:
+        current_id_list.append(suitable_option.get('id'))
 
-        new_car = None
-        for car in suitable_options:
-            if car.get('id') in new_car_id:
-                new_car = car
-                break
+    list_idx = []
+    for current_id in current_id_list:
+        try:
+            idx_last_id = last_id_list.index(current_id)
+        except ValueError:
+            idx_last_id = False
+        if idx_last_id is False:
+            list_idx.append(current_id_list.index(current_id))
+
+    new_options = []
+    for idx in list_idx:
+        new_options.append(current_list[idx])
+
+    return new_options
+
+
+async def compare(suitable_options, last_suitable_options):
+    if last_suitable_options:
+        new_options = await search_options(suitable_options, last_suitable_options)
     else:
-        new_car = suitable_options
+        last_list = []
+        new_options = await search_options(suitable_options, last_list)
 
-    with open('suitable_options.pkl', 'wb') as file:
-        pickle.dump(suitable_options, file)
-    with open('list_id.pkl', 'wb') as file:
-        pickle.dump(list_id, file)
-
-    return new_car
+    return new_options

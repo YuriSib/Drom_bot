@@ -14,20 +14,21 @@ async def main():
     dp = Dispatcher()
     dp.include_router(router)
 
-    asyncio.create_task(dp.start_polling(bot))
-
-    last_suitable_options = []
     while True:
-        url = await get_url()
-        suitable_options = await scrapping_drom(url)
-        new_car = await compare(suitable_options, last_suitable_options)
-        if new_car:
-            for car in new_car:
-                await bot.send_message(674796107, f'По заданным фильтрам есть новое объявление: \n '
-                                                f'Наименование: {car.get("name")}; \n Цена: {car.get("price")}; \n '
-                                                f'Ссылка: {car.get("link")} ')
-        last_suitable_options = suitable_options
-        await asyncio.sleep(300)
+        await dp.start_polling(bot)
+
+    # last_suitable_options = []
+    # while True:
+    #     url = await get_url()
+    #     suitable_options = await scrapping_drom(url)
+    #     new_car = await compare(suitable_options, last_suitable_options)
+    #     if new_car:
+    #         for car in new_car:
+    #             await bot.send_message(674796107, f'По заданным фильтрам есть новое объявление: \n '
+    #                                             f'Наименование: {car.get("name")}; \n Цена: {car.get("price")}; \n '
+    #                                             f'Ссылка: {car.get("link")} ')
+    #     last_suitable_options = suitable_options
+    #     await asyncio.sleep(300)
 
 
 if __name__ == '__main__':

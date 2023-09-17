@@ -20,8 +20,8 @@ search_radius = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='0', callback_data='0')],
     [InlineKeyboardButton(text='100 км', callback_data='radius_100')],
     [InlineKeyboardButton(text='200 км', callback_data='radius_200')],
-    [InlineKeyboardButton(text='400 км', callback_data='radius_400')],
-    [InlineKeyboardButton(text='800 км', callback_data='radius_800')]
+    [InlineKeyboardButton(text='500 км', callback_data='radius_500')],
+    [InlineKeyboardButton(text='1000 км', callback_data='radius_1000')]
 ])
 
 price_range = InlineKeyboardMarkup(inline_keyboard=[
@@ -31,8 +31,9 @@ price_range = InlineKeyboardMarkup(inline_keyboard=[
      InlineKeyboardButton(text='200 - 300 тыс.', callback_data='price_200-300')],
     [InlineKeyboardButton(text='300 - 500 тыс.', callback_data='price_300-500'),
      InlineKeyboardButton(text='500 - 800 тыс.', callback_data='price_500-800')],
-    [InlineKeyboardButton(text='800 тыс. - 1.2 м.', callback_data='price_800-1200'),
-     InlineKeyboardButton(text='от 1.2 м', callback_data='price_1200')]
+    [InlineKeyboardButton(text='800 тыс. - 1.2 М.', callback_data='price_800-1200'),
+     InlineKeyboardButton(text='от 1.2 - 1.5 М.', callback_data='price_1200-1500')],
+    [InlineKeyboardButton(text='от 1.5 М.', callback_data='price_1500')]
 ])
 
 year_range = InlineKeyboardMarkup(inline_keyboard=[
@@ -48,7 +49,7 @@ year_range = InlineKeyboardMarkup(inline_keyboard=[
 ])
 
 manufacturer = InlineKeyboardMarkup(inline_keyboard=[
-    [InlineKeyboardButton(text='Отечественный производитель', callback_data='from_russia'),
+    [InlineKeyboardButton(text='Русские и иномарки', callback_data='from_all'),
      InlineKeyboardButton(text='Иномарки', callback_data='from_foreign')],
 ])
 

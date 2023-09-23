@@ -3,7 +3,8 @@ from aiogram.types import (ReplyKeyboardMarkup, KeyboardButton,
 
 
 main = ReplyKeyboardMarkup(keyboard=[
-    [KeyboardButton(text='Настроить фильтр'),
+    [KeyboardButton(text='Настроить фильтр')],
+    [KeyboardButton(text='Смотреть текущий фильтр'),
      KeyboardButton(text='Справка')],
 ],
                            resize_keyboard=True,
@@ -13,6 +14,26 @@ main = ReplyKeyboardMarkup(keyboard=[
 reference = InlineKeyboardMarkup(inline_keyboard=[
     [InlineKeyboardButton(text='Тема подсказки 1', callback_data='topic_1')],
     [InlineKeyboardButton(text='Тема подсказки 2', callback_data='topic_2')]
+])
+
+
+searching_city = InlineKeyboardMarkup(inline_keyboard=[
+    [InlineKeyboardButton(text='Москва', callback_data='city_msk'),
+     InlineKeyboardButton(text='Санкт-Петербург', callback_data='city_spb')],
+    [InlineKeyboardButton(text='Екатеринбург', callback_data='city_ekb'),
+     InlineKeyboardButton(text='Нижний Новгород', callback_data='city_nino')],
+    [InlineKeyboardButton(text='Красноярск', callback_data='city_kras'),
+     InlineKeyboardButton(text='Челябинск', callback_data='city_chlb')],
+    [InlineKeyboardButton(text='Самара', callback_data='city_smr'),
+     InlineKeyboardButton(text='Уфа', callback_data='city_ufa')],
+    [InlineKeyboardButton(text='Ростов-на-Дону', callback_data='city_rnd'),
+     InlineKeyboardButton(text='Краснодар', callback_data='city_krsnd')],
+    [InlineKeyboardButton(text='Омск', callback_data='city_omsk'),
+     InlineKeyboardButton(text='Воронеж', callback_data='city_vrn')],
+    [InlineKeyboardButton(text='Пермь', callback_data='city_prm'),
+     InlineKeyboardButton(text='Волгоград', callback_data='city_vlg')],
+    [InlineKeyboardButton(text='Белгород', callback_data='city_blg'),
+     InlineKeyboardButton(text='Старый Оскол', callback_data='city_sosk')]
 ])
 
 

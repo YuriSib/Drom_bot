@@ -1,7 +1,26 @@
 
-async def get_url(radius_, price_, year_, manufacturer_):
-    city = 'novosibirsk.'
+async def get_url(city_, radius_, price_, year_, manufacturer_):
     keywords = f'&keywords=срочно'
+
+    city_dict = {
+        'city_msk': 'moscow.',
+        'city_spb': 'spb.',
+        'city_ekb': 'ekaterinburg.',
+        'city_nino': 'nizhniy-novgorod.',
+        'city_kras': 'krasnoyarsk.',
+        'city_chlb': 'chelyabinsk.',
+        'city_smr': 'samara.',
+        'city_ufa': 'ufa.',
+        'city_rnd': 'rostov-na-donu.',
+        'city_krsnd': 'krasnodar.',
+        'city_omsk': 'omsk.',
+        'city_vrn': 'voronezh.',
+        'city_prm': 'perm.',
+        'city_vlg': 'volgograd.',
+        'city_blg': 'belgorod.',
+        'city_sosk': 'stariy-oskol.',
+    }
+    city = city_dict.get(city_, '')
 
     radius_dict = {
         '0': '',
@@ -39,17 +58,10 @@ async def get_url(radius_, price_, year_, manufacturer_):
     year = year_dict.get(year_, '')
 
     manufacturer_dict = {
-        'from_russia': '&minyear=2000&maxyear=2005',
-        'from_foreign': ''
+        'from_all': '',
+        'from_foreign': '?inomarka=1'
     }
     manufacturer = manufacturer_dict.get(manufacturer_, '')
-
-    # radius = 'distance=100'
-    # min_price = '&minprice=150000'
-    # max_price = '&maxprice=3000000'
-    # min_year = '&minyear=2014'
-    # max_year = '&maxyear=2020'
-    # manufacturer = '&inomarka=1'
 
     url = f'https://{city}drom.ru/auto/all/?{radius}{price}{year}{manufacturer}{keywords}'
 

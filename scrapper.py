@@ -29,9 +29,9 @@ async def scrapping_drom(url_):
         else:
             estimation = 'без оценки'
 
-        if 'хорошая' in estimation or 'отличная' in estimation:
-            car = dict([('id', id_), ('estimation', estimation), ('name', name), ('link', lnk), ('price', price)])
-            suitable_options.append(car)
+        # if 'хорошая' in estimation or 'отличная' in estimation:
+        car = dict([('id', id_), ('estimation', estimation), ('link', lnk), ('price', price)])
+        suitable_options.append(car)
 
     return suitable_options
 
@@ -65,7 +65,6 @@ async def compare(suitable_options, last_suitable_options):
     if last_suitable_options:
         new_options = await search_options(suitable_options, last_suitable_options)
     else:
-        last_list = []
-        new_options = await search_options(suitable_options, last_list)
+        new_options = await search_options(suitable_options, [])
 
     return new_options

@@ -47,11 +47,7 @@ async def search_options(current_list, last_list):
 
     list_idx = []
     for current_id in current_id_list:
-        try:
-            idx_last_id = last_id_list.index(current_id)
-        except ValueError:
-            idx_last_id = False
-        if idx_last_id is False:
+        if current_id not in last_id_list:
             list_idx.append(current_id_list.index(current_id))
 
     new_options = []

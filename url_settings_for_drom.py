@@ -1,5 +1,5 @@
 
-async def get_url(city_, radius_, price_, year_, manufacturer_):
+async def get_drom_url(city_, radius_, price_, year_, manufacturer_):
     keywords = f'&keywords=срочно'
 
     city_dict = {

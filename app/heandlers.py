@@ -5,7 +5,7 @@ import app.keyboards as kb
 import os
 
 from scrapper import scrapping_drom, compare
-from url_settings import get_url
+from url_settings_for_drom import get_drom_url
 from work_to_file import load_from_pickle, save_to_pickle
 
 router = Router()
@@ -128,7 +128,7 @@ async def cb_start_monitoring(callback: CallbackQuery, bot):
     city, radius, price, year, manufacturer = search_filter.get("city"), search_filter.get("radius"), \
         search_filter.get("price"), search_filter.get("year"), search_filter.get("manufacturer")
 
-    url = await get_url(city, radius, price, year, manufacturer)
+    url = await get_drom_url(city, radius, price, year, manufacturer)
 
     users_dict = await load_from_pickle('users_dict.pkl') if os.path.isfile('users_dict.pkl') else {}
     users_dict[str(user_id)] = url

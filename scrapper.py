@@ -2,6 +2,36 @@ import requests
 from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
+from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.action_chains import ActionChains
+from selenium_stealth import stealth
+
+
+def settings():
+    options = webdriver.ChromeOptions()
+    options.add_argument("start-maximized")
+
+    # options.add_argument("--headless")
+
+    options.add_experimental_option("excludeSwitches", ["enable-automation"])
+    options.add_experimental_option('useAutomationExtension', False)
+    driver = webdriver.Chrome(options=options)
+
+    stealth(driver,
+            languages=["en-US", "en"],
+            vendor="Google Inc.",
+            platform="Win32",
+            webgl_vendor="Intel Inc.",
+            renderer="Intel Iris OpenGL Engine",
+            fix_hairline=True,
+            )
+
+    return driver
+
 
 async def scrapping_drom(url_):
     ua = UserAgent()
@@ -31,6 +61,30 @@ async def scrapping_drom(url_):
 
         # if 'хорошая' in estimation or 'отличная' in estimation:
         car = dict([('id', id_), ('estimation', estimation), ('link', lnk), ('price', price)])
+        suitable_options.append(car)
+
+    return suitable_options
+
+
+async def scrapping_avito(url):
+    driver = settings()
+    driver.get(url=url)
+
+    html = driver.page_source
+    soup = BeautifulSoup(html, 'lxml')
+
+    options = soup.find_all('div', {'data-marker': 'item'})
+
+    suitable_options = []
+    for option in options:
+        item_id = option.get('data-item-id')
+
+        html_link = option.find('a', {'class': 'iva-item-sliderLink-uLz1v'})
+        link = html_link.get('href')
+
+        price = option.find('div', {'class': 'iva-item-priceStep-uq2CQ'}).get_text(strip=True)
+
+        car = dict([('id', item_id), ('link', link), ('price', price)])
         suitable_options.append(car)
 
     return suitable_options

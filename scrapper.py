@@ -3,12 +3,9 @@ from fake_useragent import UserAgent
 from bs4 import BeautifulSoup
 
 from selenium import webdriver
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.action_chains import ActionChains
 from selenium_stealth import stealth
+
+from sql_master import load_options_from_sql, save_options_in_sql
 
 
 def settings():
@@ -33,7 +30,7 @@ def settings():
     return driver
 
 
-async def scrapping_drom(url_):
+async def scrapping_drom(url_, tg_id):
     ua = UserAgent()
     user_agent = ua.random
 
@@ -62,11 +59,12 @@ async def scrapping_drom(url_):
         # if 'хорошая' in estimation or 'отличная' in estimation:
         car = dict([('id', id_), ('estimation', estimation), ('link', lnk), ('price', price)])
         suitable_options.append(car)
+        save_options_in_sql(tg_id, id_, lnk, price)
 
     return suitable_options
 
 
-async def scrapping_avito(url):
+async def scrapping_avito(url, tg_id):
     driver = settings()
     driver.get(url=url)
 
@@ -86,6 +84,7 @@ async def scrapping_avito(url):
 
         car = dict([('id', item_id), ('link', link), ('price', price)])
         suitable_options.append(car)
+        save_options_in_sql(tg_id, item_id, link, price)
 
     return suitable_options
 
@@ -111,7 +110,8 @@ async def search_options(current_list, last_list):
     return new_options
 
 
-async def compare(suitable_options, last_suitable_options):
+async def compare(suitable_options, tg_id):
+    last_suitable_options = load_options_from_sql(tg_id)
     if last_suitable_options:
         new_options = await search_options(suitable_options, last_suitable_options)
     else:

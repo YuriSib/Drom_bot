@@ -20,9 +20,10 @@ async def save_to_pickle(filename, data):
         pickle.dump(data, file)
 
 
-async def load_from_pickle(filename):
+def load_from_pickle(filename):
     with open(filename, 'rb') as file:
         data = pickle.load(file)
     return data
 
+print(load_from_pickle('last_options_674796107.pkl'))
 

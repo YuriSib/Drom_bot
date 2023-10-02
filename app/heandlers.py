@@ -4,9 +4,9 @@ from aiogram.types import Message, CallbackQuery
 import app.keyboards as kb
 import os
 
-from scrapper import scrapping_drom, compare
+from scrapper import scrapping_drom, scrapping_avito, compare
 from url_settings_for_drom import get_drom_url
-from work_to_file import load_from_pickle, save_to_pickle
+from url_settings_for_avito import get_avito_url
 
 router = Router()
 
@@ -104,16 +104,22 @@ async def cb_confirm(callback: CallbackQuery, bot):
     await bot.send_message(chat_id=callback.from_user.id, text='Подтвердите выбор', reply_markup=kb.confirmation)
 
 
-async def send_massage(user_filename, url, bot, user_id):
-    last_suitable_options = await load_from_pickle(user_filename) if os.path.isfile(user_filename) else []
-    suitable_options = await scrapping_drom(url)
-    new_car = await compare(suitable_options, last_suitable_options)
+async def send_massage(drom_url, avito_url, bot, user_id):
+    suitable_options_drom = await scrapping_drom(drom_url, user_id)
+    suitable_options_avito = await scrapping_avito(avito_url, user_id)
+
+    new_car = []
+
+    new_car_drom = await compare(suitable_options_drom, user_id)
+    new_car.append(new_car_drom)
+    new_car_avito = await compare(suitable_options_avito, user_id)
+    new_car.append(new_car_avito)
+
     if new_car:
         for car in new_car:
             await bot.send_message(user_id, f'По заданным фильтрам есть новое объявление: \n '
                                             f'Наименование: {car.get("name")}; \n Цена: {car.get("price")}; \n '
                                             f'Ссылка: {car.get("link")} ')
-    await save_to_pickle(user_filename, suitable_options)
 
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('confirmation_yes'))
@@ -128,15 +134,10 @@ async def cb_start_monitoring(callback: CallbackQuery, bot):
     city, radius, price, year, manufacturer = search_filter.get("city"), search_filter.get("radius"), \
         search_filter.get("price"), search_filter.get("year"), search_filter.get("manufacturer")
 
-    url = await get_drom_url(city, radius, price, year, manufacturer)
+    drom_url = await get_drom_url(city, radius, price, year, manufacturer)
+    avito_url = await get_avito_url(city, radius, price, year, manufacturer)
 
-    users_dict = await load_from_pickle('users_dict.pkl') if os.path.isfile('users_dict.pkl') else {}
-    users_dict[str(user_id)] = url
-    await save_to_pickle('users_dict.pkl', users_dict)
-
-    user_filename = f'last_options_{user_id}.pkl'
-
-    await send_massage(user_filename, url, bot, user_id)
+    await send_massage(drom_url, avito_url, bot, user_id)
 
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('topic_1'))

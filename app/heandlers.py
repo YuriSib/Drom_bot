@@ -4,9 +4,10 @@ from aiogram.types import Message, CallbackQuery
 import app.keyboards as kb
 import os
 
-from scrapper import scrapping_drom, scrapping_avito, compare
+from scrapper import scrapping_drom, scrapping_avito
 from url_settings_for_drom import get_drom_url
 from url_settings_for_avito import get_avito_url
+from sql_master import load_options_from_sql
 
 router = Router()
 
@@ -105,15 +106,10 @@ async def cb_confirm(callback: CallbackQuery, bot):
 
 
 async def send_massage(drom_url, avito_url, bot, user_id):
-    suitable_options_drom = await scrapping_drom(drom_url, user_id)
-    suitable_options_avito = await scrapping_avito(avito_url, user_id)
+    await scrapping_drom(drom_url, user_id)
+    await scrapping_avito(avito_url, user_id)
 
-    new_car = []
-
-    new_car_drom = await compare(suitable_options_drom, user_id)
-    new_car.append(new_car_drom)
-    new_car_avito = await compare(suitable_options_avito, user_id)
-    new_car.append(new_car_avito)
+    new_car = load_options_from_sql(user_id, car_id)
 
     if new_car:
         for car in new_car:

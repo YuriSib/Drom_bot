@@ -50,11 +50,11 @@ def load_id_from_sql(tg_id):
         return result[0]
 
 
-def load_options_from_sql(tg_id):
+def load_options_from_sql(tg_id, car_id):
     with sq.connect('bot.db') as con:
         cur = con.cursor()
         sql_query = f"""
-            SELECT tg_id, car_id, link, price FROM ads WHERE tg_id == {tg_id}
+            SELECT tg_id, car_id, link, price FROM ads WHERE tg_id == {tg_id} AND car_id == {car_id}
         """
         cur.execute(sql_query)
 
@@ -99,4 +99,5 @@ def clear_options_in_sql(user_id):
 # result = load_id_from_sql(1234)
 # print(result)
 
-print(load_options_from_sql(1234))
+print(load_options_from_sql(12345))
+# create_db()

@@ -73,7 +73,6 @@ async def scrapping_avito(url, tg_id):
 
     options = soup.find_all('div', {'data-marker': 'item'})
 
-    suitable_options = []
     for option in options:
         item_id = option.get('data-item-id')
 
@@ -82,11 +81,7 @@ async def scrapping_avito(url, tg_id):
 
         price = option.find('div', {'class': 'iva-item-priceStep-uq2CQ'}).get_text(strip=True)
 
-        car = dict([('id', item_id), ('link', link), ('price', price)])
-        suitable_options.append(car)
         save_options_in_sql(tg_id, item_id, link, price)
-
-    return suitable_options
 
 
 async def search_options(current_list, last_list):
@@ -106,15 +101,5 @@ async def search_options(current_list, last_list):
     new_options = []
     for idx in list_idx:
         new_options.append(current_list[idx])
-
-    return new_options
-
-
-async def compare(suitable_options, tg_id):
-    last_suitable_options = load_options_from_sql(tg_id)
-    if last_suitable_options:
-        new_options = await search_options(suitable_options, last_suitable_options)
-    else:
-        new_options = await search_options(suitable_options, [])
 
     return new_options

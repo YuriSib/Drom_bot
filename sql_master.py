@@ -53,9 +53,9 @@ def load_id_from_sql(tg_id):
 def load_options_from_sql(tg_id, car_id):
     with sq.connect('bot.db') as con:
         cur = con.cursor()
-        sql_query = f"""
-            SELECT tg_id, car_id, link, price FROM ads WHERE tg_id == {tg_id} AND car_id == {car_id}
-        """
+
+        car_id_string = ", ".join([str(item) for item in car_id])
+        sql_query = f"""SELECT car_id, link, price FROM ads WHERE tg_id == {tg_id} AND car_id NOT IN ({car_id_string})"""
         cur.execute(sql_query)
 
         result = cur.fetchall()
@@ -93,11 +93,3 @@ def clear_options_in_sql(user_id):
         """
         cur.execute(sql_query)
         con.commit()
-
-
-# save_in_sql(1234, 'city_sosk', 'radius_300', 'price_100-150', 'year_2000-2010')
-# result = load_id_from_sql(1234)
-# print(result)
-
-print(load_options_from_sql(12345))
-# create_db()

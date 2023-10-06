@@ -44,22 +44,21 @@ async def scrapping_drom(url_, tg_id):
     for option in options:
         price = option.find('span', {'data-ftid': 'bull_price'}).get_text(strip=True).replace('\xa0', '.')
         lnk = option.get('href')
-        id_ = lnk.split('/')[-1].split('.')[0]
+        car_id = lnk.split('/')[-1].split('.')[0]
 
         html_name = option.find('div', {'class': 'css-1wgtb37 e3f4v4l2'})
         if html_name:
             name = html_name.get_text(strip=True)
-
-        html_estimation = option.find('div', {'class': 'css-11m58oj evjskuu0'})
-        if html_estimation:
-            estimation = html_estimation.get_text(strip=True)
-        else:
-            estimation = 'без оценки'
+        # html_estimation = option.find('div', {'class': 'css-11m58oj evjskuu0'})
+        # if html_estimation:
+        #     estimation = html_estimation.get_text(strip=True)
+        # else:
+        #     estimation = 'без оценки'
 
         # if 'хорошая' in estimation or 'отличная' in estimation:
-        car = dict([('id', id_), ('estimation', estimation), ('link', lnk), ('price', price)])
+        car = dict([('tg_id', tg_id), ('car_id', car_id), ('link', lnk), ('price', price)])
         suitable_options.append(car)
-        save_options_in_sql(tg_id, id_, lnk, price)
+        # save_options_in_sql(tg_id, id_, lnk, price)
 
     return suitable_options
 
@@ -72,16 +71,20 @@ async def scrapping_avito(url, tg_id):
     soup = BeautifulSoup(html, 'lxml')
 
     options = soup.find_all('div', {'data-marker': 'item'})
+    suitable_options = []
 
     for option in options:
-        item_id = option.get('data-item-id')
+        car_id = option.get('data-item-id')
 
         html_link = option.find('a', {'class': 'iva-item-sliderLink-uLz1v'})
-        link = html_link.get('href')
+        lnk = html_link.get('href')
 
         price = option.find('div', {'class': 'iva-item-priceStep-uq2CQ'}).get_text(strip=True)
 
-        save_options_in_sql(tg_id, item_id, link, price)
+        car = dict([('tg_id', tg_id), ('car_id', car_id), ('link', lnk), ('price', price)])
+        suitable_options.append(car)
+
+    return suitable_options
 
 
 async def search_options(current_list, last_list):

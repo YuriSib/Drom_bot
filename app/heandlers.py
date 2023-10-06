@@ -106,10 +106,13 @@ async def cb_confirm(callback: CallbackQuery, bot):
 
 
 async def send_massage(drom_url, avito_url, bot, user_id):
-    await scrapping_drom(drom_url, user_id)
-    await scrapping_avito(avito_url, user_id)
+    cars = await scrapping_drom(drom_url, user_id)
+    cars_addition = await scrapping_avito(avito_url, user_id)
 
-    new_car = load_options_from_sql(user_id, car_id)
+    cars.extend(cars_addition)
+    car_id_list = [car['car_id'] for car in cars]
+
+    new_car = load_options_from_sql(user_id, car_id_list)
 
     if new_car:
         for car in new_car:

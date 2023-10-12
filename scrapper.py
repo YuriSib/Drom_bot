@@ -5,8 +5,6 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 from selenium_stealth import stealth
 
-from sql_master import load_options_from_sql, save_options_in_sql
-
 
 def settings():
     options = webdriver.ChromeOptions()

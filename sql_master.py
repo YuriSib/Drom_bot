@@ -50,12 +50,12 @@ def load_id_from_sql(tg_id):
         return result[0]
 
 
-def load_options_from_sql(tg_id, car_id):
+def load_missing(tg_id, car_id):
     with sq.connect('bot.db') as con:
         cur = con.cursor()
 
-        car_id_string = ", ".join([str(item) for item in car_id])
-        sql_query = f"""SELECT car_id, link, price FROM ads WHERE tg_id == {tg_id} AND car_id NOT IN ({car_id_string})"""
+        # car_id_string = ", ".join([str(item) for item in car_id_list])
+        sql_query = f"""SELECT car_id FROM ads WHERE tg_id == {tg_id} AND car_id NOT IN ({car_id})"""
         cur.execute(sql_query)
 
         result = cur.fetchall()

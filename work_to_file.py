@@ -25,5 +25,3 @@ def load_from_pickle(filename):
         data = pickle.load(file)
     return data
 
-print(load_from_pickle('last_options_674796107.pkl'))
-

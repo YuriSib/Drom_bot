@@ -1,13 +1,11 @@
-import asyncio
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
 import app.keyboards as kb
-import os
 
 from scrapper import scrapping_drom, scrapping_avito
 from url_settings_for_drom import get_drom_url
 from url_settings_for_avito import get_avito_url
-from sql_master import load_options_from_sql
+from sql_master import load_missing, save_options_in_sql
 
 router = Router()
 
@@ -112,13 +110,15 @@ async def send_massage(drom_url, avito_url, bot, user_id):
     cars.extend(cars_addition)
     car_id_list = [car['car_id'] for car in cars]
 
-    new_car = load_options_from_sql(user_id, car_id_list)
+    new_car = [(car_id, load_missing(user_id, car_id)) for car_id in car_id_list]
 
-    if new_car:
-        for car in new_car:
-            await bot.send_message(user_id, f'По заданным фильтрам есть новое объявление: \n '
-                                            f'Наименование: {car.get("name")}; \n Цена: {car.get("price")}; \n '
-                                            f'Ссылка: {car.get("link")} ')
+    for car in new_car:
+        if not car[1]:
+            for car_dict in cars:
+                if car_dict['car_id'] == car[0]:
+                    save_options_in_sql(user_id, car[0], car_dict.get("link"), car_dict.get("price"))
+                    await bot.send_message(user_id, f'По заданным фильтрам есть новое объявление: \n '
+                                                    f'Цена: {car_dict.get("price")}; \n Ссылка: {car_dict.get("link")}')
 
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('confirmation_yes'))

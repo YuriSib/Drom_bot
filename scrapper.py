@@ -10,7 +10,7 @@ def settings():
     options = webdriver.ChromeOptions()
     options.add_argument("start-maximized")
 
-    # options.add_argument("--headless")
+    options.add_argument("--headless")
 
     options.add_experimental_option("excludeSwitches", ["enable-automation"])
     options.add_experimental_option('useAutomationExtension', False)
@@ -75,7 +75,7 @@ async def scrapping_avito(url, tg_id):
         car_id = option.get('data-item-id')
 
         html_link = option.find('a', {'class': 'iva-item-sliderLink-uLz1v'})
-        lnk = html_link.get('href')
+        lnk = 'https://www.avito.ru' + html_link.get('href')
 
         price = option.find('div', {'class': 'iva-item-priceStep-uq2CQ'}).get_text(strip=True)
 

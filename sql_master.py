@@ -93,3 +93,7 @@ def clear_options_in_sql(user_id):
         """
         cur.execute(sql_query)
         con.commit()
+
+
+if __name__ == "__main__":
+    create_db()

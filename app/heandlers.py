@@ -1,7 +1,8 @@
 from aiogram import Router, F
 from aiogram.types import Message, CallbackQuery
-import app.keyboards as kb
+import asyncio
 
+import app.keyboards as kb
 from scrapper import scrapping_drom, scrapping_avito
 from url_settings_for_drom import get_drom_url
 from url_settings_for_avito import get_avito_url
@@ -136,7 +137,9 @@ async def cb_start_monitoring(callback: CallbackQuery, bot):
     drom_url = await get_drom_url(city, radius, price, year, manufacturer)
     avito_url = await get_avito_url(city, radius, price, year, manufacturer)
 
-    await send_massage(drom_url, avito_url, bot, user_id)
+    while True:
+        await send_massage(drom_url, avito_url, bot, user_id)
+        await asyncio.sleep(10)
 
 
 @router.callback_query(lambda callback_query: callback_query.data.startswith('topic_1'))
